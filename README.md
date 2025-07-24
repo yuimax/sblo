@@ -13,5 +13,8 @@
 - [立夏](data/016-立夏.md)
 - [小満](data/017-小満.md)
 - [芒種](data/018-芒種.md)
+- [夏至](data/019-夏至.md)
+- [小暑](data/020-小暑.md)
+- [大暑](data/021-大暑.md)
 
 + Blog URL -- <https://yuima.sblo.jp/>
