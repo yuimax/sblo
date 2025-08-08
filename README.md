@@ -16,5 +16,6 @@
 - [夏至](data/019-夏至.md)
 - [小暑](data/020-小暑.md)
 - [大暑](data/021-大暑.md)
+- [立秋](data/022-立秋.md)
 
 + Blog URL -- <https://yuima.sblo.jp/>
