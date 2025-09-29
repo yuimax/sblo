@@ -5,7 +5,7 @@
     <title>Markdownビューア</title>
     <style>
         body {
-			max-width: 560px;
+			max-width: 480px;
 			margin: 0 auto;
 			padding: 20px;
 		}
@@ -23,40 +23,54 @@
     <div id="markdown-content"></div>
     <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/lib/marked.umd.min.js"></script>
     <script>
+
+	// パスのディレクトリのみ返す
+	function getDir(path) {
+		const index = path.lastIndexOf('/');
+		return (index < 0) ? '.' : path.substring(0, index);
+	}
+
 	async function loadAndRenderMarkdown() {
-		if (typeof marked === 'undefined') {
-			alert("ERROR: 'marked'ライブラリが必要です");
-			return;
-		}
-		const contentDiv = document.getElementById('markdown-content');
-		if (!contentDiv) {
-			alert("エラー: ID 'markdown-content' を持つ要素が見つかりません。");
-			return;
-		}
+		const outBox = document.getElementById('markdown-content');
 		const params = new URLSearchParams(window.location.search);
 		const markdownUrl = params.get('md');
 		if (!markdownUrl) {
-			contentDiv.innerHTML = `
+			outBox.innerHTML = `
 				<h1>Markdownファイルが指定されていません</h1>
-				<p>例： <a href="mdv.html?md=data/025-秋分.md">mdv.html?md=data/025-秋分.md</a></p>
+				<p>例： <a href="mdv.html?md=data/026-秋分.md">mdv.html?md=data/026-秋分.md</a></p>
 			`;
 			return;
 		}
+
 		try {
 			const response = await fetch(markdownUrl);
 			if (!response.ok) {
-				contentDiv.innerHTML =`
+				outBox.innerHTML =`
 					HTTPエラー: ${response.status} ${response.statusText}
 					`;
 				return;
 			}
 			const mdText = await response.text();
-			const mdText2 = mdText.replace(/\(img\/(.*?)\)/g, "(data/img/$1)");
+
+			// markdownUrl のディレクトリ部分を baseDir に取り出す
+			const baseDir = getDir(markdownUrl);
+
+			// 画像リンクが相対パスなら、baseDirからの相対パスに変換する
+			const re_image = /\[(.*?)\]\((.*?)\)/g;
+			const re_http = /^https?\/\//;
+			const mdText2 = mdText.replace(re_image, (match, alt, url) => {
+				if (!re_http.test(url)) {
+					url = `${baseDir}/${url}`;
+				}
+				return `[${alt}](${url})`;
+			});
+
+			// MarkDownをHTMLに変換する
 			const html = marked.parse(mdText2);
-			contentDiv.innerHTML = html;
+			outBox.innerHTML = html;
 
 		} catch (error) {
-			contentDiv.innerHTML = `
+			outBox.innerHTML = `
 				<h1>エラーが発生しました</h1>
 				<p>${error.message}</p>
 				<p>指定されたURL: ${markdownUrl}</p>
