@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Markdownビューア</title>
+    <style>
+        body {
+			max-width: 560px;
+			margin: 0 auto;
+			padding: 20px;
+		}
+        #markdown-content img {
+			max-width: 100%;
+			height: auto;
+		}
+		ul {
+			padding: 0 0 0 1.5rem;
+			line-height: 175%;
+		}
+    </style>
+</head>
+<body>
+    <div id="markdown-content"></div>
+    <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/lib/marked.umd.min.js"></script>
+    <script>
+	async function loadAndRenderMarkdown() {
+		if (typeof marked === 'undefined') {
+			alert("ERROR: 'marked'ライブラリが必要です");
+			return;
+		}
+		const contentDiv = document.getElementById('markdown-content');
+		if (!contentDiv) {
+			alert("エラー: ID 'markdown-content' を持つ要素が見つかりません。");
+			return;
+		}
+		const params = new URLSearchParams(window.location.search);
+		const markdownUrl = params.get('md');
+		if (!markdownUrl) {
+			contentDiv.innerHTML = `
+				<h1>Markdownファイルが指定されていません</h1>
+				<p>例： <a href="mdv.html?md=data/025-秋分.md">mdv.html?md=data/025-秋分.md</a></p>
+			`;
+			return;
+		}
+		try {
+			const response = await fetch(markdownUrl);
+			if (!response.ok) {
+				contentDiv.innerHTML =`HTTPエラー: ${response.status} ${response.statusText}`;
+			}
+			const mdText = await response.text();
+			const mdText2 = mdText.replace(/\(img\/(.*?)\)/g, "(data/img/$1)");
+			const html = marked.parse(mdText2);
+			contentDiv.innerHTML = html;
+
+		} catch (error) {
+			contentDiv.innerHTML = `
+				<h1>エラーが発生しました</h1>
+				<p>${error.message}</p>
+				<p>指定されたURL: ${markdownUrl}</p>
+				`;
+		}
+	}
+
+	loadAndRenderMarkdown();
+
+	</script> 
+</body>
+</html>
