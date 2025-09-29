@@ -1,1 +1,5 @@
-AddCharset UTF-8 .md
+<IfModule mod_headers.c>
+    <FilesMatch "\.md$">
+        Header set Content-Type "text/markdown; charset=utf-8"
+    </FilesMatch>
+</IfModule>

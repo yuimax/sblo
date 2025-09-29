@@ -45,7 +45,10 @@
 		try {
 			const response = await fetch(markdownUrl);
 			if (!response.ok) {
-				contentDiv.innerHTML =`HTTPエラー: ${response.status} ${response.statusText}`;
+				contentDiv.innerHTML =`
+					HTTPエラー: ${response.status} ${response.statusText}
+					`;
+				return;
 			}
 			const mdText = await response.text();
 			const mdText2 = mdText.replace(/\(img\/(.*?)\)/g, "(data/img/$1)");
