@@ -56,13 +56,13 @@
 			const baseDir = getDir(markdownUrl);
 
 			// 画像リンクが相対パスなら、baseDirからの相対パスに変換する
-			const re_image = /\[(.*?)\]\((.*?)\)/g;
+			const re_image = /!\[(.*?)\]\((.*?)\)/g;
 			const re_http = /^https?:\/\//;
 			const mdText2 = mdText.replace(re_image, (match, alt, url) => {
 				if (!re_http.test(url)) {
 					url = `${baseDir}/${url}`;
 				}
-				return `[${alt}](${url})`;
+				return `![${alt}](${url})`;
 			});
 
 			// MarkDownをHTMLに変換する
