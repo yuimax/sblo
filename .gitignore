@@ -2,4 +2,4 @@
 .gitignore
 .gitattributes
 _*
-img_large
+img_large/
