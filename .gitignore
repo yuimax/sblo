@@ -3,3 +3,4 @@
 .gitattributes
 _*
 img_large/
+.ruff_cache/
